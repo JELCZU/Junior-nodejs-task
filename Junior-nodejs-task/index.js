@@ -1,9 +1,48 @@
+// const mongoose=require('mongoose')
+require ('./db/mongoose');
+const Product=require('./db/models/product');
 const express = require("express");
+
+// const { MongoClient } = require("mongodb");
 const app = express();
 
+
+//model
+
+
+
+
+const createProduct=async (data)=>{
+  try{const user=new Product(data)
+    await user.save()
+    console.log(user)}
+    catch(error){console.log(error)}
+}
+
+const removeProduct=async (id)=>{
+  try{Product.findByIdAndDelete(id,(err,docs)=>{
+    if(err){console.log(err)}
+  })
+     }
+    catch(error){console.log(error)}
+}
+createProduct({name:"as4as4d3796755a92d461960bcasd3796755a92d461960bc2", price: 123,updateDate:Date.now()     })
+// removeProduct("63796755a92d461960bc91b8");
+async function findUsers(){
+  console.log(User)
+  try{
+    const users=await Product.find({})
+    console.log(users)
+  }
+catch(error){
+  console.log(error)
+}
+}
+// findUsers()
+// createProduct()
 // interface product {
 //   Id: string;
-//   Name: string;
+//   Name: string; 
 //   Price: number;
 //   UpdateDate: number;
 // }
@@ -45,4 +84,4 @@ app.delete("/Product/:id", function (req, res, next) {
 app.listen(8080, function () {
   console.log("listening!");
 });
-console.log(products);
+// console.log(products);
