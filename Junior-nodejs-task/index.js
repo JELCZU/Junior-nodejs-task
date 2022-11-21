@@ -1,82 +1,68 @@
-// const mongoose=require('mongoose')
 require ('./db/mongoose');
 const Product=require('./db/models/product');
 const express = require("express");
-
-// const { MongoClient } = require("mongodb");
+const bodyParser=require("body-parser")
 const app = express();
+const jsonParser=bodyParser.json()
 
 
-//model
-
-
-
-
-const createProduct=async (data)=>{
+async function createProduct (data){
   try{const user=new Product(data)
     await user.save()
     console.log(user)}
     catch(error){console.log(error)}
 }
 
-const removeProduct=async (id)=>{
-  try{Product.findByIdAndDelete(id,(err,docs)=>{
-    if(err){console.log(err)}
-  })
+ async function deleteProduct(id){
+  try{await Product.findByIdAndDelete(id)
      }
     catch(error){console.log(error)}
 }
-createProduct({name:"as4as4d3796755a92d461960bcasd3796755a92d461960bc2", price: 123,updateDate:Date.now()     })
-// removeProduct("63796755a92d461960bc91b8");
-async function findUsers(){
-  console.log(User)
-  try{
-    const users=await Product.find({})
-    console.log(users)
+
+async function updateProduct (id,update){
+  try{await Product.findByIdAndUpdate(id,update,{ runValidators: true })
+
+     }
+    catch(error){console.log(error)}
+}
+async function getProducts (){
+  try{return await Product.find({})
+     }
+    catch(error){console.log(error)}
+}
+async function getProduct (id){
+  try{return await Product.findById(id)
+     }
+    catch(error){console.log(error)}
+}
+
+// app.get("/", function (req, res, next) {
+//   res.json({ status: "Sukces!" });
+// });
+
+app.post("/Products",jsonParser , async function (req, res, next) {
+ 
+  try{ createProduct({name:req.body.name,price:req.body.price,updateDate:Date.now()})}
+  catch(error){
+    console.log(error)
   }
-catch(error){
-  console.log(error)
-}
-}
-// findUsers()
-// createProduct()
-// interface product {
-//   Id: string;
-//   Name: string; 
-//   Price: number;
-//   UpdateDate: number;
-// }
-// interface test {
-//   someNumber: number;
-// }
-// const someNumberMyNumber = [];
-// const products: product[];
-const products = [{ Id: "1", Name: "abc", Price: 20, actualData: Date.now() }];
-
-// console.log(Date.now())
-app.get("/", function (req, res, next) {
-  res.json({ status: "Sukces!" });
+  res.json()
 });
 
-app.post("/addProduct", function (req, res, next) {
-res.json();
-products.push({ Id: (products.length+1)+"", Name: "abc", Price: 20, actualData: Date.now() });
-  
+ app.get("/Products", async function (req, res, next) {
+  res.json(await getProducts());
 });
-
-app.get("/Products", function (req, res, next) {
-  res.json(products);
-});
-app.get("/Product/:id", function (req, res, next) {
-  let productId=products.findIndex((product) => product.Id == req.params.id)
-  // console.log(productId)
-  res.json(products[productId]);
+app.get("/Product/:id", async function (req, res, next) {
+  res.json(await getProduct (req.params.id));
 });
 
 app.delete("/Product/:id", function (req, res, next) {
-  let productId=products.findIndex((product) => product.Id == req.params.id)
-  // console.log(productId)
-  products.splice(productId,1)
+  deleteProduct (req.params.id)
+  res.json();
+});
+
+app.put("/Product/:id",jsonParser, function (req, res, next) {
+updateProduct (req.params.id,{name:req.body.name,price:req.body.price,updateDate:Date.now()})
   res.json();
 });
 
@@ -84,4 +70,3 @@ app.delete("/Product/:id", function (req, res, next) {
 app.listen(8080, function () {
   console.log("listening!");
 });
-// console.log(products);
